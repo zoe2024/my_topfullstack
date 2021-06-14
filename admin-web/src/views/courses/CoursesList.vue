@@ -1,3 +1,9 @@
+<!--
+ * @Author: yuan.zhou
+ * @Date: 2021-02-12 16:11:04
+ * @Descripton: 
+ * @LastEditTime: 2021-06-05 22:21:46
+-->
 <template>
   <div id="courses-list">
     <h1>课程管理-课程列表</h1>
@@ -39,7 +45,7 @@ export default class CoursesList extends Vue {
     this.data = res.data
   }
 
-  async remove( row ) {
+  async remove( row: {_id: string} ) {
     try {
       await this.$confirm("是否确认删除？");
     } catch (e) {

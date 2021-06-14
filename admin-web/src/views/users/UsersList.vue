@@ -2,52 +2,33 @@
   <div id="user-list">
     <h3>{{option.title}}</h3>
     <avue-crud 
-    :data="data" 
-    :option="option" 
-    v-model="obj"
-    @row-save="create"
-    @row-update="update"
-    @row-del="remove"
-    @date-change="dateChange">
+      v-if="option.column"
+      :data="data" 
+      :option="option" 
+      v-model="obj"
+      @row-save="create"
+      @row-update="update"
+      @row-del="remove"
+      @date-change="dateChange">
+
       <template  slot="menu">
         <el-button type="text" size="small" @click.native="tip">自定义按钮</el-button>
       </template>
+
     </avue-crud>
   </div>
 </template>
 
 <script>
-
+import { usersCrudOptions } from './UsersCrudOptions'
 export default {
-   data() {
-      return {
-        obj:{},
-        data: [
-
-        ],
-        option:{
-          title: '用户管理',
-          index:true,
-          indexLabel:'序号',
-          menuType:'text',
-          page:true,
-          align:'center',
-          dateBtn:true,
-          dateDefault:true,
-          menuAlign:'center',
-          column:[
-             {
-              label:'姓名',
-              prop:'username'
-            },
-            {
-              label:'密码',
-              prop:'password'
-            }
-          ]
+    data() {
+        return {
+          obj:{},
+          data: [],
+          option:{}
         }
-      }
-    },
+      },
     methods: {
       async fetch() {
         const res = await this.$http.get('users')
@@ -87,6 +68,7 @@ export default {
     },
 
     created() {
+      this.option = usersCrudOptions
       this.fetch()
     }
 }

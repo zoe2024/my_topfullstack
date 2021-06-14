@@ -1,4 +1,4 @@
-# admin-web
+# admin-pc
 
 ## Project setup
 ```

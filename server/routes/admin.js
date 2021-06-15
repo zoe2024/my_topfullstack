@@ -2,33 +2,60 @@
  * @Author: yuan.zhou
  * @Date: 2021-06-14 15:54:50
  * @Descripton: 
- * @LastEditTime: 2021-06-14 15:58:30
+ * @LastEditTime: 2021-06-15 21:57:30
  */
 module.exports = app => {
   const express = require('express')
-  const router = express.Router()
-  const Category = require('../model/Category')
-  router.post('/categories', async (req, res) => {
-    const model = await Category.create(req.body)
+  const router = express.Router({
+    mergeParams: true
+  })
+
+  /* 中间件封装 */
+  app.use('/admin/api/rest/:resource', async (req, res, next) => {
+    const modelName = require('inflection').classify(req.params.resource)
+    req.Model = require(`../models/${modelName}`)
+    next()
+  }, router)
+
+  /* 创建 */
+  router.post('/', async (req, res) => {
+    const model = await req.Model.create(req.body)
     res.send(model)
   })
-  router.put('/categories/:id', async (req, res) => {
-    const model = await Category.findByIdAndUpdate(req.params.id, req.body)
+  /* findByIdAndUpdate通过id更新某一项 */
+  router.post('/:id', async (req, res) => {
+    const model = await req.Model.findByIdAndUpdate(req.params.id, req.body)
     res.send(model)
   })
-  router.delete('/categories/:id', async (req, res) => {
-    await Category.findByIdAndDelete(req.params.id)
+  /* findByIdAndDelete根据id删除某一项 */
+  router.post('/:id', async (req, res) => {
+    await req.Model.findByIdAndDelete(req.params.id)
     res.send({
       success: true
     })
   })
-  router.get('/categories', async (req, res) => {
-    const items = await Category.find().limit(10)
+  /* 列表查询 */
+  router.get('/', async (req, res) => {
+    const queryOptions = {}
+    if (req.Model.modelName === 'Category') {
+      queryOptions.populate = 'parent'
+    }
+    const items = await req.Model.find().setOptions(queryOptions).limit(10)
     res.send(items)
   })
-  router.get('/categories/:id', async (req, res) => {
-    const model = await Category.findById(req.params.id)
+  /*  */
+  router.get('/:id', async (req, res) => {
+    const model = await req.Model.findById(req.params.id)
     res.send(model)
   })
-  app.use('/admin/api', router)
+
+  /* 文件上传 */
+  const multer = require('multer')
+  console.log({__dirname, __filename})
+  const upload = multer({ dest: __dirname + '/../uploads' })
+  app.post('/admin/api/upload', upload.single('file'), async (req, res) => {
+    const file = req.file
+    file.url = `http://localhost:3000/uploads/${file.filename}`
+    res.send(file)
+  })
 }

@@ -2,7 +2,7 @@
  * @Author: yuan.zhou
  * @Date: 2021-06-14 13:56:11
  * @Descripton: 新建分类
- * @LastEditTime: 2021-06-14 17:16:24
+ * @LastEditTime: 2021-06-15 21:58:13
 -->
 <template>
   <div>
@@ -46,9 +46,9 @@ export default {
     async onSubmit() {
       let res;
       if (this.id) {
-        res = await this.$http.put(`categories/${this.id}`, this.formData);
+        res = await this.$http.post(`rest/categories/${this.id}`, this.formData);
       } else {
-        res = await this.$http.post("categories", this.formData);
+        res = await this.$http.post("rest/categories", this.formData);
       }
       console.log({res});
       this.$router.push("/categories/list");
@@ -58,7 +58,7 @@ export default {
       });
     },
     async fetch() {
-      const res = await this.$http.get(`categories/${this.id}`);
+      const res = await this.$http.get(`rest/categories/${this.id}`);
       this.formData = res.data;
     },
   },

@@ -2,7 +2,7 @@
  * @Author: yuan.zhou
  * @Date: 2021-06-14 14:46:12
  * @Descripton: 
- * @LastEditTime: 2021-06-14 17:08:59
+ * @LastEditTime: 2021-06-15 21:42:59
 -->
 <template>
   <div>
@@ -41,7 +41,7 @@ export default {
   methods: {
     async getTableInfo() {
       this.table.loading = true;
-      let res = await this.$http.get("categories");
+      let res = await this.$http.get("rest/categories");
       this.table.loading = false;
       console.log({ res });
       this.table.data = res.data;
@@ -52,7 +52,7 @@ export default {
         cancelButtonText: "取消",
         type: "warning",
       }).then(async () => {
-        let res = await this.$http.delete(`categories/${row._id}`);
+        let res = await this.$http.post(`rest/categories/${row._id}`);
         if (res.status !== 200) {
           this.$message({ message: "删除失败", type: "info" });
           return;
